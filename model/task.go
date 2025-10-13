@@ -15,9 +15,17 @@ type Task struct {
 	Status         int         `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
 	CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
 	Uris           []string    `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
-	Comments       []Comment   `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	// TODO: 负责人与执行者
+	
+	Comments       []Comment   `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ManagerID      int64       `gorm:"column:manager_id"`
+	Manager        User        `gorm:"foreignKey:ManagerID;references:ID;constraint:OnDelete:SET NULL;"`
+	ExecutorID     int64       `gorm:"column:executor_id"`
+	Executor       User        `gorm:"foreignKey:ExecutorID;references:ID;constraint:OnDelete:SET NULL"`
 }
+// CriticalPoints 直接以 json 文本存储在数据库
+// URIs 直接以 json 文本存储在数据库
+// Task 与 Comment 为 has many
+// Task 与 Manager, Executor 均为 belongs to
 
 type TimePoint struct {
 	Event string
