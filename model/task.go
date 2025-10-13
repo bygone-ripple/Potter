@@ -15,7 +15,7 @@ type Task struct {
 	Status         int         `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
 	CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
 	Uris           []string    `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
-	// TODO: 评论区
+	Comments       []Comment   `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	// TODO: 负责人与执行者
 }
 
