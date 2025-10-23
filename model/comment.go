@@ -11,4 +11,4 @@ type Comment struct {
 	PosterID int64     `gorm:"column:poster_id"`
 	Poster   User      `gorm:"foreignKey:PosterID;references:ID;constraint:OnDelete:CASCADE"`
 }
-// Comment 与 User 为 belong to
+// Comment 与 Poster 为 belong to
