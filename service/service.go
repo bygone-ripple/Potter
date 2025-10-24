@@ -1,7 +1,10 @@
 package service
 
 type Service struct {
-	Hello
+	Auth
+	User
+	Task
+	Comment
 }
 
 func New() *Service {

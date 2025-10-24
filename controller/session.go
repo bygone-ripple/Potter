@@ -8,9 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ID 设置为 User 的 ID，Level 目前均设置成 1
 type UserSession struct {
-	ID       int
-	Username string
+	ID       int64
+	UserName string
 	Level    int
 }
 
