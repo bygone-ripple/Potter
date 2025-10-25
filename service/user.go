@@ -27,8 +27,7 @@ func (u User) Register(name string, password string) (model.User, error) {
 	if count > 0 {
 		return model.User{}, common.ErrNew(fmt.Errorf("该昵称已被其他人使用"), common.OpErr)
 	}
-	// TODO: Error 1364 (HY000): Field 'created_at' doesn't have a default value
-	if err := model.DB.Model(&User{}).Create(&user).Error; err != nil {
+	if err := model.DB.Model(&model.User{}).Create(&user).Error; err != nil {
 		return model.User{}, common.ErrNew(fmt.Errorf("创建用户记录失败：%v", err), common.SysErr)
 	}
 	return user, nil
