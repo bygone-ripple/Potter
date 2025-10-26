@@ -10,13 +10,13 @@ import (
 type User struct{}
 
 func (u User) Register(name string, password string) (model.User, error) {
-	encrypted, encryptErr := utils.Encrypt(password)
-	if encryptErr != nil {
-		return model.User{}, common.ErrNew(fmt.Errorf("加密密码时出错：%v", encryptErr), common.SysErr)
+	hash, hashErr := utils.HashPassword(password)
+	if hashErr != nil {
+		return model.User{}, common.ErrNew(fmt.Errorf("哈希密码时出错：%v", hashErr), common.SysErr)
 	}
 	user := model.User{
 		Name:     name,
-		Password: encrypted,
+		Password: hash,
 	}
 
 	var count int64
@@ -50,11 +50,11 @@ func (u User) UpdateInfo(id int64, name string, password string) (model.User, er
 		user.Name = name
 	}
 	if password != "" {
-		encrypted, encryptErr := utils.Encrypt(password)
-		if encryptErr != nil {
-			return model.User{}, common.ErrNew(fmt.Errorf("加密密码时出错：%v", encryptErr), common.SysErr)
+		hash, hashErr := utils.HashPassword(password)
+		if hashErr != nil {
+			return model.User{}, common.ErrNew(fmt.Errorf("哈希密码时出错：%v", hashErr), common.SysErr)
 		}
-		user.Password = encrypted
+		user.Password = hash
 	}
 
 	if err := model.DB.Save(&user).Error; err != nil {
