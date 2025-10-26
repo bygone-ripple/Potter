@@ -62,6 +62,11 @@ func (*User) UpdateInfo(c *gin.Context) {
 		c.Error(err)
 		return
 	}
+	SessionSet(c, "user-session", UserSession{
+		ID:       userInfo.ID,
+		UserName: userInfo.Name,
+		Level:    1,
+	})
 	c.JSON(http.StatusOK, ResponseNew(c, struct {
 		ID   int64  `json:"id"`
 		Name string `json:"name"`
