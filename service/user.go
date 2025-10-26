@@ -39,3 +39,27 @@ func (u User) Register(name string, password string) (model.User, error) {
 	}
 	return userInfo, nil
 }
+
+func (u User) UpdateInfo(id int64, name string, password string) (model.User, error) {
+	var user model.User
+	if err := model.DB.Model(&model.User{}).Where("id = ?", id).First(&user).Error; err != nil {
+		return model.User{}, common.ErrNew(fmt.Errorf("获取用户信息失败：%v", err), common.SysErr)
+	}
+
+	if name != "" {
+		user.Name = name
+	}
+	if password != "" {
+		encrypted, encryptErr := utils.Encrypt(password)
+		if encryptErr != nil {
+			return model.User{}, common.ErrNew(fmt.Errorf("加密密码时出错：%v", encryptErr), common.SysErr)
+		}
+		user.Password = encrypted
+	}
+
+	if err := model.DB.Save(&user).Error; err != nil {
+		return model.User{}, common.ErrNew(fmt.Errorf("更新用户信息失败：%v", err), common.SysErr)
+	}
+
+	return user, nil
+}
