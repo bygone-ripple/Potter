@@ -19,17 +19,23 @@ func (*User) Register(c *gin.Context) {
 		c.Error(common.ErrNew(err, common.ParamErr))
 		return
 	}
-	user, err := srv.User.Register(json.Name, json.Password)
+	userInfo, err := srv.User.Register(json.Name, json.Password)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 	SessionSet(c, "user-session", UserSession{
-		ID:       user.ID,
-		UserName: user.Name,
+		ID:       userInfo.ID,
+		UserName: userInfo.Name,
 		Level:    1,
 	})
-	c.JSON(http.StatusOK, ResponseNew(c, user))
+	c.JSON(http.StatusOK, ResponseNew(c, struct {
+		ID   int64  `json:"id"`
+		Name string `json:"name"`
+	}{
+		ID:   userInfo.ID,
+		Name: userInfo.Name,
+	}))
 }
 
 func (*User) GetInfo(c *gin.Context) {
