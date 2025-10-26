@@ -27,8 +27,15 @@ func (u User) Register(name string, password string) (model.User, error) {
 	if count > 0 {
 		return model.User{}, common.ErrNew(fmt.Errorf("该昵称已被其他人使用"), common.OpErr)
 	}
+
 	if err := model.DB.Model(&model.User{}).Create(&user).Error; err != nil {
 		return model.User{}, common.ErrNew(fmt.Errorf("创建用户记录失败：%v", err), common.SysErr)
 	}
-	return user, nil
+
+	var userInfo model.User
+	if err := model.DB.Model(&model.User{}).
+		Select("id, name").Where("name = ?", name).First(&userInfo).Error; err != nil {
+		return model.User{}, common.ErrNew(fmt.Errorf("获取用户信息失败：%v", err), common.SysErr)
+	}
+	return userInfo, nil
 }
