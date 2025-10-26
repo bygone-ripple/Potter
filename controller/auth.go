@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"template/common"
 
@@ -38,5 +39,10 @@ func (*Auth) Login(c *gin.Context) {
 }
 
 func (*Auth) Logout(c *gin.Context) {
-	
+	if session := SessionGet(c, "user-session"); session == nil {
+		c.Error(common.ErrNew(fmt.Errorf("用户未登录"), common.AuthErr))
+		return
+	}
+	SessionDelete(c, "user-session")
+	c.JSON(http.StatusOK, ResponseNew(c, nil))
 }
