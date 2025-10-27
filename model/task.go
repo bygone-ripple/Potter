@@ -15,21 +15,22 @@ type Task struct {
 	Status         int         `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
 	CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
 	Uris           []string    `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
-	
-	Comments       []Comment   `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	PosterID      int64       `gorm:"column:poster_id"`
-	Poster        User        `gorm:"foreignKey:PosterID;references:ID;constraint:OnDelete:SET NULL;"`
-	AssigneeID     int64       `gorm:"column:assignee_id"`
-	Assignee       User        `gorm:"foreignKey:AssigneeID;references:ID;constraint:OnDelete:SET NULL"`
+
+	Comments   []Comment `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	PosterID   *int64    `gorm:"column:poster_id"`
+	Poster     User      `gorm:"foreignKey:PosterID;references:ID;constraint:OnDelete:SET NULL;"`
+	AssigneeID *int64    `gorm:"column:assignee_id"`
+	Assignee   User      `gorm:"foreignKey:AssigneeID;references:ID;constraint:OnDelete:SET NULL"`
 }
+
 // CriticalPoints 直接以 json 文本存储在数据库
 // URIs 直接以 json 文本存储在数据库
 // Task 与 Comment 为 has many
 // Task 与 Poster, Assignee 均为 belong to
 
 type TimePoint struct {
-	Event string
-	Time  time.Time
+	Event string    `json:"event"`
+	Time  time.Time `json:"time"`
 }
 
 // Depart 数据库值int -> 各部门是否参与的map
@@ -41,4 +42,16 @@ func (t *Task) DepartToMap() map[string]bool {
 	result["art"] = (t.Depart & (1 << 0)) != 0
 
 	return result
+}
+
+func DepartToInt(depart string) int {
+	switch depart {
+	case "tech":
+		return 1 << 2
+	case "video":
+		return 1 << 1
+	case "art":
+		return 1 << 0
+	}
+	return 0
 }
