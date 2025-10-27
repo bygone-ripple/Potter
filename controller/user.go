@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"template/common"
+	"template/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -78,7 +79,29 @@ func (*User) UpdateInfo(c *gin.Context) {
 
 // GetPostedTasks 获取该用户发布的所有锅单
 func (*User) GetPostedTasks(c *gin.Context) {
+	session := SessionGet(c, "user-session")
+	// session 不为空，因接口中间件有验证登录
+	userID := session.(UserSession).ID
 
+	tasks, err := srv.User.GetPostedTasks(userID)
+	type taskInfo struct {
+		ID           int64             `json:"id"`
+		Name         string            `json:"name"`
+		Depart       string            `json:"depart"`
+	}
+	var responseData []taskInfo
+	for _, task := range tasks {
+		responseData = append(responseData, taskInfo{
+			ID:     task.ID,
+			Name:   task.Name,
+			Depart: model.DepartToStr(task.Depart),
+		})
+	}
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, ResponseNew(c, responseData))
 }
 
 // GetAssignedTasks 获取该用户接取的所有锅单

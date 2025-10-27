@@ -63,3 +63,11 @@ func (u User) UpdateInfo(id int64, name string, password string) (model.User, er
 
 	return user, nil
 }
+
+func (u User) GetPostedTasks(userID int64) ([]model.Task, error) {
+	var tasks []model.Task
+	if err := model.DB.Model(&model.Task{}).Where("poster_id = ?", userID).Find(&tasks).Error; err != nil {
+		return nil, common.ErrNew(fmt.Errorf("获取用户发布的锅单失败：%v", err), common.SysErr)
+	}
+	return tasks, nil
+}

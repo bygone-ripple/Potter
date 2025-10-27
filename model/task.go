@@ -55,3 +55,15 @@ func DepartToInt(depart string) int {
 	}
 	return 0
 }
+
+func DepartToStr(depart int) string {
+	switch depart {
+	case 1 << 2:
+		return "tech"
+	case 1 << 1:
+		return "video"
+	case 1 << 0:
+		return "art"
+	}
+	return ""
+}
