@@ -67,8 +67,21 @@ func (*Task) Get(c *gin.Context) {
 
 }
 
+// GetInfo 通过 ID 获取锅单详细信息
 func (*Task) GetInfo(c *gin.Context) {
-
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	taskInfo, err := srv.Task.GetInfo(uri.TaskID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(200, ResponseNew(c, taskInfo))
 }
 
 func (*Task) Delete(c *gin.Context) {
