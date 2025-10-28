@@ -34,17 +34,17 @@ func InitRouter(r *gin.Engine) {
 			taskRouter.Use(middleware.CheckRole(1))
 			taskRouter.POST("/", ctr.Task.Add)
 			taskRouter.GET("/", ctr.Task.Get)
-			taskRouter.GET("/{taskID}", ctr.Task.GetInfo)
-			taskRouter.DELETE("/{taskID}", ctr.Task.Delete)
-			taskRouter.PUT("/{taskID}", ctr.Task.UpdateInfo)
-			taskRouter.POST("/{taskID}/assignees", ctr.Task.AddAssignee)
-			taskRouter.DELETE("/{taskID}/assginees/me", ctr.Task.DeleteAssignee)
-			taskRouter.POST("/{taskID}/comments", ctr.Task.PostComment)
+			taskRouter.GET("/:taskID", ctr.Task.GetInfo)
+			taskRouter.DELETE("/:taskID", ctr.Task.Delete)
+			taskRouter.PUT("/:taskID", ctr.Task.UpdateInfo)
+			taskRouter.POST("/:taskID/assignees", ctr.Task.AddAssignee)
+			taskRouter.DELETE("/:taskID/assignees/me", ctr.Task.DeleteAssignee)
+			taskRouter.POST("/:taskID/comments", ctr.Task.PostComment)
 		}
 		commentRouter := apiRouter.Group("/comments")
 		{
 			commentRouter.Use(middleware.CheckRole(1))
-			commentRouter.DELETE("/{commentID}", ctr.Comment.DeleteComment)
+			commentRouter.DELETE("/:commentID", ctr.Comment.DeleteComment)
 		}
 	}
 }
