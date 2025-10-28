@@ -84,8 +84,21 @@ func (*Task) GetInfo(c *gin.Context) {
 	c.JSON(200, ResponseNew(c, taskInfo))
 }
 
+// Delete 删除锅单，仅发布者可删除
 func (*Task) Delete(c *gin.Context) {
-
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	session := SessionGet(c, "user-session").(UserSession)
+	if err := srv.Task.Delete(uri.TaskID, session.ID); err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(200, ResponseNew(c, nil))
 }
 
 func (*Task) UpdateInfo(c *gin.Context) {
