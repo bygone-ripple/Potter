@@ -30,13 +30,8 @@ func (*User) Register(c *gin.Context) {
 		UserName: userInfo.Name,
 		Level:    1,
 	})
-	c.JSON(http.StatusOK, ResponseNew(c, struct {
-		ID   int64  `json:"id"`
-		Name string `json:"name"`
-	}{
-		ID:   userInfo.ID,
-		Name: userInfo.Name,
-	}))
+	// 用户密码序列化为 json 时会被忽略
+	c.JSON(http.StatusOK, ResponseNew(c, userInfo))
 }
 
 func (*User) GetInfo(c *gin.Context) {

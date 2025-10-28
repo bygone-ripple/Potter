@@ -31,13 +31,7 @@ func (u User) Register(name string, password string) (model.User, error) {
 	if err := model.DB.Model(&model.User{}).Create(&user).Error; err != nil {
 		return model.User{}, common.ErrNew(fmt.Errorf("创建用户记录失败：%v", err), common.SysErr)
 	}
-
-	var userInfo model.User
-	if err := model.DB.Model(&model.User{}).
-		Select("id, name").Where("name = ?", name).First(&userInfo).Error; err != nil {
-		return model.User{}, common.ErrNew(fmt.Errorf("获取用户信息失败：%v", err), common.SysErr)
-	}
-	return userInfo, nil
+	return user, nil
 }
 
 func (u User) UpdateInfo(id int64, name string, password string) (model.User, error) {
