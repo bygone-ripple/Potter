@@ -42,7 +42,7 @@ func (*Task) Add(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(200, ResponseNew(c, struct {
+	c.JSON(http.StatusCreated, ResponseNew(c, struct {
 		ID             int64             `json:"id"`
 		Name           string            `json:"name"`
 		Depart         string            `json:"depart"`
@@ -82,7 +82,7 @@ func (*Task) GetInfo(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(200, ResponseNew(c, taskInfo))
+	c.JSON(http.StatusOK, ResponseNew(c, taskInfo))
 }
 
 // Delete 删除锅单，仅发布者可删除
@@ -99,7 +99,7 @@ func (*Task) Delete(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	c.JSON(200, ResponseNew(c, nil))
+	c.JSON(http.StatusNoContent, ResponseNew(c, nil))
 }
 
 func (*Task) UpdateInfo(c *gin.Context) {

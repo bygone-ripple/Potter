@@ -31,7 +31,7 @@ func (*User) Register(c *gin.Context) {
 		Level:    1,
 	})
 	// 用户密码序列化为 json 时会被忽略
-	c.JSON(http.StatusOK, ResponseNew(c, userInfo))
+	c.JSON(http.StatusCreated, ResponseNew(c, userInfo))
 }
 
 func (*User) GetInfo(c *gin.Context) {
