@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"net/http"
 	"template/common"
 	"template/model"
 	"time"
@@ -105,9 +106,22 @@ func (*Task) UpdateInfo(c *gin.Context) {
 
 }
 
-// AddAssignee 将自己添加为锅单的接锅人
+// AddAssignee 将自己添加为锅单的接锅人，自由修改不应调用此接口
 func (*Task) AddAssignee(c *gin.Context) {
-
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	session := SessionGet(c, "user-session").(UserSession)
+	taskInfo, err := srv.Task.AddAssignee(uri.TaskID, session.ID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusCreated, ResponseNew(c, taskInfo))
 }
 
 // DeleteAssignee 将自己从接锅人中删除
