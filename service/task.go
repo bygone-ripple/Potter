@@ -45,17 +45,17 @@ func (t Task) Delete(taskID int, userID int64) error {
 	return nil
 }
 
-func (*Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
+func (t Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
 	res := model.DB.Model(&model.Task{}).
-	Where("id = ? AND assignee_id IS NULL", taskID).
-	Update("assignee_id", userID)
+		Where("id = ? AND assignee_id IS NULL", taskID).
+		Update("assignee_id", userID)
 	if res.Error != nil {
 		return model.Task{}, common.ErrNew(fmt.Errorf("添加接锅人失败：%v", res.Error), common.SysErr)
 	}
 	if res.RowsAffected == 0 {
 		return model.Task{}, common.ErrNew(fmt.Errorf("该锅单已有接锅人"), common.OpErr)
 	}
-	
+
 	var task model.Task
 	if err := model.DB.Model(&model.Task{}).
 		Preload("Assignee", func(db *gorm.DB) *gorm.DB {
@@ -70,7 +70,7 @@ func (*Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
 	return task, nil
 }
 
-func (*Task) DeleteAssignee(taskID int, userID int64) error {
+func (t Task) DeleteAssignee(taskID int, userID int64) error {
 	res := model.DB.Model(&model.Task{}).
 		Where("id = ? AND assignee_id = ?", taskID, userID).
 		Update("assignee_id", nil)

@@ -11,7 +11,7 @@ import (
 
 type User struct{}
 
-func (*User) Register(c *gin.Context) {
+func (u User) Register(c *gin.Context) {
 	var json struct {
 		Name     string `json:"name" binding:"required"`
 		Password string `json:"password" binding:"required"`
@@ -34,12 +34,12 @@ func (*User) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, ResponseNew(c, userInfo))
 }
 
-func (*User) GetInfo(c *gin.Context) {
+func (u User) GetInfo(c *gin.Context) {
 
 }
 
 // UpdateInfo 修改用户信息，需要验证用户身份，若传入参数为空则不修改该项
-func (*User) UpdateInfo(c *gin.Context) {
+func (u User) UpdateInfo(c *gin.Context) {
 	var json struct {
 		ID       int64  `json:"id" binding:"required"`
 		Name     string `json:"name" binding:"omitempty"`
@@ -73,16 +73,16 @@ func (*User) UpdateInfo(c *gin.Context) {
 }
 
 // GetPostedTasks 获取该用户发布的所有锅单
-func (*User) GetPostedTasks(c *gin.Context) {
+func (u User) GetPostedTasks(c *gin.Context) {
 	session := SessionGet(c, "user-session")
 	// session 不为空，因接口中间件有验证登录
 	userID := session.(UserSession).ID
 
 	tasks, err := srv.User.GetPostedTasks(userID)
 	type taskInfo struct {
-		ID           int64             `json:"id"`
-		Name         string            `json:"name"`
-		Depart       string            `json:"depart"`
+		ID     int64  `json:"id"`
+		Name   string `json:"name"`
+		Depart string `json:"depart"`
 	}
 	var responseData []taskInfo
 	for _, task := range tasks {
@@ -100,6 +100,6 @@ func (*User) GetPostedTasks(c *gin.Context) {
 }
 
 // GetAssignedTasks 获取该用户接取的所有锅单
-func (*User) GetAssignedTasks(c *gin.Context) {
+func (u User) GetAssignedTasks(c *gin.Context) {
 
 }

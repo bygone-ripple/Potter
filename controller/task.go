@@ -64,12 +64,12 @@ func (*Task) Add(c *gin.Context) {
 }
 
 // Get 通过名称、部门等查询参数获取锅单列表，支持分页查询
-func (*Task) Get(c *gin.Context) {
+func (t Task) Get(c *gin.Context) {
 
 }
 
 // GetInfo 通过 ID 获取锅单详细信息
-func (*Task) GetInfo(c *gin.Context) {
+func (t Task) GetInfo(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
 	}
@@ -86,7 +86,7 @@ func (*Task) GetInfo(c *gin.Context) {
 }
 
 // Delete 删除锅单，仅发布者可删除
-func (*Task) Delete(c *gin.Context) {
+func (t Task) Delete(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
 	}
@@ -102,12 +102,12 @@ func (*Task) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, ResponseNew(c, nil))
 }
 
-func (*Task) UpdateInfo(c *gin.Context) {
+func (t Task) UpdateInfo(c *gin.Context) {
 
 }
 
 // AddAssignee 将自己添加为锅单的接锅人，自由修改不应调用此接口
-func (*Task) AddAssignee(c *gin.Context) {
+func (t Task) AddAssignee(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
 	}
@@ -125,7 +125,7 @@ func (*Task) AddAssignee(c *gin.Context) {
 }
 
 // DeleteAssignee 将自己从接锅人中删除
-func (*Task) DeleteAssignee(c *gin.Context) {
+func (t Task) DeleteAssignee(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
 	}
@@ -142,6 +142,6 @@ func (*Task) DeleteAssignee(c *gin.Context) {
 	c.JSON(http.StatusNoContent, ResponseNew(c, nil))
 }
 
-func (*Task) PostComment(c *gin.Context) {
+func (t Task) PostComment(c *gin.Context) {
 
 }

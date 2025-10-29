@@ -10,7 +10,7 @@ import (
 
 type Auth struct{}
 
-func (*Auth) Login(c *gin.Context) {
+func (a Auth) Login(c *gin.Context) {
 	var json struct {
 		Name     string `json:"name" binding:"required"`
 		Password string `json:"password" binding:"required"`
@@ -38,7 +38,7 @@ func (*Auth) Login(c *gin.Context) {
 	}))
 }
 
-func (*Auth) Logout(c *gin.Context) {
+func (a Auth) Logout(c *gin.Context) {
 	if session := SessionGet(c, "user-session"); session == nil {
 		c.Error(common.ErrNew(fmt.Errorf("用户未登录"), common.AuthErr))
 		return
