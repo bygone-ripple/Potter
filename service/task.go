@@ -77,3 +77,16 @@ func (*Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
 	}
 	return task, nil
 }
+
+func (*Task) DeleteAssignee(taskID int, userID int64) error {
+	res := model.DB.Model(&model.Task{}).
+		Where("id = ? AND assignee_id = ?", taskID, userID).
+		Update("assignee_id", nil)
+	if res.Error != nil {
+		return common.ErrNew(fmt.Errorf("删除接锅人失败：%v", res.Error), common.SysErr)
+	}
+	if res.RowsAffected == 0 {
+		return common.ErrNew(fmt.Errorf("该锅单不存在或接锅人不是您"), common.OpErr)
+	}
+	return nil
+}

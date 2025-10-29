@@ -126,7 +126,20 @@ func (*Task) AddAssignee(c *gin.Context) {
 
 // DeleteAssignee 将自己从接锅人中删除
 func (*Task) DeleteAssignee(c *gin.Context) {
-
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	session := SessionGet(c, "user-session").(UserSession)
+	err := srv.Task.DeleteAssignee(uri.TaskID, session.ID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusNoContent, ResponseNew(c, nil))
 }
 
 func (*Task) PostComment(c *gin.Context) {
