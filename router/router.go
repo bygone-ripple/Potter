@@ -12,7 +12,7 @@ func InitRouter(r *gin.Engine) {
 	r.Static("/static", "./uploads")
 	apiRouter := r.Group("/api")
 	{
-		apiRouter.POST("/uploads", ctr.Upload, middleware.CheckRole(1))
+		apiRouter.POST("/uploads", middleware.CheckRole(1), ctr.Upload)
 		authRouter := apiRouter.Group("/auth")
 		{
 			authRouter.POST("/login", ctr.Auth.Login)
