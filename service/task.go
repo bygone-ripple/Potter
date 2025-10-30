@@ -73,7 +73,10 @@ func (t Task) Delete(taskID int, userID int64) error {
 func (t Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
 	res := model.DB.Model(&model.Task{}).
 		Where("id = ? AND assignee_id IS NULL", taskID).
-		Update("assignee_id", userID)
+		Updates(map[string]any{
+			"assignee_id": userID,
+			"status":      int(model.InProgress),
+		})
 	if res.Error != nil {
 		return model.Task{}, common.ErrNew(fmt.Errorf("添加接锅人失败：%v", res.Error), common.SysErr)
 	}
@@ -98,7 +101,10 @@ func (t Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
 func (t Task) DeleteAssignee(taskID int, userID int64) error {
 	res := model.DB.Model(&model.Task{}).
 		Where("id = ? AND assignee_id = ?", taskID, userID).
-		Update("assignee_id", nil)
+		Updates(map[string]any{
+			"assignee_id": nil,
+			"status":      int(model.NotTaken),
+		})
 	if res.Error != nil {
 		return common.ErrNew(fmt.Errorf("删除接锅人失败：%v", res.Error), common.SysErr)
 	}

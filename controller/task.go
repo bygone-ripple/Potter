@@ -36,6 +36,7 @@ func (*Task) Add(c *gin.Context) {
 	session := SessionGet(c, "user-session").(UserSession)
 	task.PosterID = &session.ID
 	task.Depart = model.DepartToInt(json.Depart)
+	task.Status = int(model.NotTaken)
 
 	taskInfo, err := srv.Task.Add(task)
 	if err != nil {
@@ -147,7 +148,7 @@ func (t Task) UpdateInfo(c *gin.Context) {
 
 }
 
-// AddAssignee 将自己添加为锅单的接锅人，自由修改不应调用此接口
+// AddAssignee 将自己添加为锅单的接锅人，并将状态设置成已接取，自由修改不应调用此接口
 func (t Task) AddAssignee(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
@@ -165,7 +166,7 @@ func (t Task) AddAssignee(c *gin.Context) {
 	c.JSON(http.StatusCreated, ResponseNew(c, taskInfo))
 }
 
-// DeleteAssignee 将自己从接锅人中删除
+// DeleteAssignee 将自己从接锅人中删除，并将状态设置为未接取，仅接锅人可调用此接口
 func (t Task) DeleteAssignee(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
