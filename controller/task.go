@@ -65,7 +65,48 @@ func (*Task) Add(c *gin.Context) {
 
 // Get 通过名称、部门等查询参数获取锅单列表，支持分页查询
 func (t Task) Get(c *gin.Context) {
-
+	var query struct {
+		common.PagerForm
+		Name   string `form:"name" binding:"omitempty"`
+		Depart string `form:"depart" binding:"omitempty,oneof=tech video art"`
+		Status int    `form:"status" binding:"omitempty,oneof=1 2 3 4"`
+		Level  int    `form:"level" binding:"omitempty,oneof=1 2 3 4 5"`
+	}
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	tasks, total, err := srv.Task.Get(query.PagerForm, query.Name, query.Depart, query.Status, query.Level)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	type taskInfo struct {
+		ID          int64     `json:"id"`
+		Name        string    `json:"name"`
+		Depart      string    `json:"depart"`
+		Description string    `json:"description"`
+		Deadline    time.Time `json:"ddl"`
+		Level       int       `json:"level"`
+	}
+	var responseData []taskInfo
+	for _, task := range tasks {
+		responseData = append(responseData, taskInfo{
+			ID:          task.ID,
+			Name:        task.Name,
+			Depart:      model.DepartToStr(task.Depart),
+			Description: task.Description,
+			Deadline:    task.Deadline,
+			Level:       task.Level,
+		})
+	}
+	c.JSON(http.StatusOK, ResponseNew(c, struct {
+		Total int64      `json:"total"`
+		List  []taskInfo `json:"list"`
+	}{
+		Total: total,
+		List:  responseData,
+	}))
 }
 
 // GetInfo 通过 ID 获取锅单详细信息
@@ -157,7 +198,7 @@ func (t Task) PostComment(c *gin.Context) {
 		c.Error(common.ErrNew(err, common.ParamErr))
 		return
 	}
-	
+
 	session := SessionGet(c, "user-session").(UserSession)
 	commentInfo, err := srv.Task.PostComment(uri.TaskID, session.ID, json.Content)
 	if err != nil {

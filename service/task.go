@@ -18,6 +18,30 @@ func (t Task) Add(task model.Task) (model.Task, error) {
 	return task, nil
 }
 
+func (t Task) Get(pager common.PagerForm, name string, depart string, status int, level int) ([]model.Task, int64, error) {
+	var tasks []model.Task
+	var total int64
+
+	db := model.DB.Model(&model.Task{})
+	if name != "" {
+		db = db.Where("name LIKE ?", "%"+name+"%")
+	}
+	filter := model.Task{
+		Depart: model.DepartToInt(depart),
+		Status: status,
+		Level:  level,
+	}
+	db = db.Where(&filter)
+
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, common.ErrNew(fmt.Errorf("获取锅单总数失败：%v", err), common.SysErr)
+	}
+	if err := db.Offset((pager.Page - 1) * pager.Limit).Limit(pager.Limit).Find(&tasks).Error; err != nil {
+		return nil, 0, common.ErrNew(fmt.Errorf("获取锅单失败：%v", err), common.SysErr)
+	}
+	return tasks, total, nil
+}
+
 func (t Task) GetInfo(taskID int) (model.Task, error) {
 	var task model.Task
 	if err := model.DB.Model(&model.Task{}).
