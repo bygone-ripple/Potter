@@ -65,3 +65,11 @@ func (u User) GetPostedTasks(userID int64) ([]model.Task, error) {
 	}
 	return tasks, nil
 }
+
+func (u User) GetAssignedTasks(userID int64) ([]model.Task, error) {
+	var tasks []model.Task
+	if err := model.DB.Model(&model.Task{}).Where("assignee_id = ?", userID).Find(&tasks).Error; err != nil {
+		return nil, common.ErrNew(fmt.Errorf("获取用户接取的锅单失败：%v", err), common.SysErr)
+	}
+	return tasks, nil
+}

@@ -101,5 +101,27 @@ func (u User) GetPostedTasks(c *gin.Context) {
 
 // GetAssignedTasks 获取该用户接取的所有锅单
 func (u User) GetAssignedTasks(c *gin.Context) {
+	session := SessionGet(c, "user-session")
+	// session 不为空，因接口中间件有验证登录
+	userID := session.(UserSession).ID
 
+	tasks, err := srv.User.GetAssignedTasks(userID)
+	type taskInfo struct {
+		ID     int64  `json:"id"`
+		Name   string `json:"name"`
+		Depart string `json:"depart"`
+	}
+	var responseData []taskInfo
+	for _, task := range tasks {
+		responseData = append(responseData, taskInfo{
+			ID:     task.ID,
+			Name:   task.Name,
+			Depart: model.DepartToStr(task.Depart),
+		})
+	}
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, ResponseNew(c, responseData))
 }
