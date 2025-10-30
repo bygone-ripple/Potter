@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // Depart 表示参与的部门，从高到低位分别为技术、视频、美工，如 0b101 表示技术与美工参与
 // Level 表示锅单评级，最低为 1，最高为 5
@@ -8,19 +11,19 @@ import "time"
 type Task struct {
 	BaseModel
 	Name           string      `gorm:"column:name;unique;not null;comment:'锅单名称'" json:"name"`
-	Depart         int         `gorm:"column:depart;comment:'参与部门'" json:"depart"`
-	Description    string      `gorm:"column:description;comment:'锅单介绍'" json:"decription"`
+	Depart         int         `gorm:"column:depart;comment:'参与部门'" json:"-"`
+	Description    string      `gorm:"column:description;comment:'锅单介绍'" json:"description"`
 	Deadline       time.Time   `gorm:"column:ddl;comment:'截止时间'" json:"ddl"`
 	Level          int         `gorm:"column:level;default:0;comment:'难度评级'" json:"level"`
 	Status         int         `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
 	CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
 	Uris           []string    `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
 
-	Comments   []Comment `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	PosterID   *int64    `gorm:"column:poster_id"`
-	Poster     User      `gorm:"foreignKey:PosterID;references:ID;constraint:OnDelete:SET NULL;"`
-	AssigneeID *int64    `gorm:"column:assignee_id"`
-	Assignee   User      `gorm:"foreignKey:AssigneeID;references:ID;constraint:OnDelete:SET NULL"`
+	Comments   []Comment `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"comments,omitempty"`
+	PosterID   *int64    `gorm:"column:poster_id" json:"posterID,omitempty"`
+	Poster     *User     `gorm:"foreignKey:PosterID;references:ID;constraint:OnDelete:SET NULL;" json:"poster,omitempty"`
+	AssigneeID *int64    `gorm:"column:assignee_id" json:"assigneeID,omitempty"`
+	Assignee   *User     `gorm:"foreignKey:AssigneeID;references:ID;constraint:OnDelete:SET NULL" json:"assignee,omitempty"`
 }
 
 // CriticalPoints 直接以 json 文本存储在数据库
@@ -75,4 +78,57 @@ func DepartToStr(depart int) string {
 		return "art"
 	}
 	return ""
+}
+
+// MarshalJSON 自定义 Task 结构体的 JSON 编码，以便将 Depart 字段转换为字符串
+func (t Task) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		ID             int64       `json:"id,omitempty"`
+		Name           string      `json:"name"`
+		Depart         string      `json:"depart"`
+		Description    string      `json:"description"`
+		Deadline       time.Time   `json:"ddl"`
+		Level          int         `json:"level"`
+		Status         int         `json:"status"`
+		CriticalPoints []TimePoint `json:"criticalPoints"`
+		Uris           []string    `json:"uris"`
+		Comments       []Comment   `json:"comments,omitempty"`
+		PosterID       *int64      `json:"posterID,omitempty"`
+		Poster         *User       `json:"poster,omitempty"`
+		AssigneeID     *int64      `json:"assigneeID,omitempty"`
+		Assignee       *User       `json:"assignee,omitempty"`
+	}{
+		ID:             t.ID,
+		Name:           t.Name,
+		Depart:         DepartToStr(t.Depart),
+		Description:    t.Description,
+		Deadline:       t.Deadline,
+		Level:          t.Level,
+		Status:         t.Status,
+		CriticalPoints: t.CriticalPoints,
+		Uris:           t.Uris,
+		Comments:       t.Comments,
+		PosterID:       t.PosterID,
+		Poster:         t.Poster,
+		AssigneeID:     t.AssigneeID,
+		Assignee:       t.Assignee,
+	})
+}
+
+// UnmarshalJSON 实现自定义 JSON 解码，以便将 Depart 字段从字符串转换为整数
+func (t *Task) UnmarshalJSON(data []byte) error {
+	type Alias Task
+	aux := &struct {
+		*Alias
+		Depart string `json:"depart"`
+	}{
+		Alias: (*Alias)(t),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.Depart != "" {
+		t.Depart = DepartToInt(aux.Depart)
+	}
+	return nil
 }

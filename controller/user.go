@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"template/common"
-	"template/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -63,13 +62,7 @@ func (u User) UpdateInfo(c *gin.Context) {
 		UserName: userInfo.Name,
 		Level:    1,
 	})
-	c.JSON(http.StatusOK, ResponseNew(c, struct {
-		ID   int64  `json:"id"`
-		Name string `json:"name"`
-	}{
-		ID:   userInfo.ID,
-		Name: userInfo.Name,
-	}))
+	c.JSON(http.StatusOK, ResponseNew(c, userInfo))
 }
 
 // GetPostedTasks 获取该用户发布的所有锅单
@@ -79,24 +72,11 @@ func (u User) GetPostedTasks(c *gin.Context) {
 	userID := session.(UserSession).ID
 
 	tasks, err := srv.User.GetPostedTasks(userID)
-	type taskInfo struct {
-		ID     int64  `json:"id"`
-		Name   string `json:"name"`
-		Depart string `json:"depart"`
-	}
-	var responseData []taskInfo
-	for _, task := range tasks {
-		responseData = append(responseData, taskInfo{
-			ID:     task.ID,
-			Name:   task.Name,
-			Depart: model.DepartToStr(task.Depart),
-		})
-	}
 	if err != nil {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, ResponseNew(c, responseData))
+	c.JSON(http.StatusOK, ResponseNew(c, tasks))
 }
 
 // GetAssignedTasks 获取该用户接取的所有锅单
@@ -106,22 +86,9 @@ func (u User) GetAssignedTasks(c *gin.Context) {
 	userID := session.(UserSession).ID
 
 	tasks, err := srv.User.GetAssignedTasks(userID)
-	type taskInfo struct {
-		ID     int64  `json:"id"`
-		Name   string `json:"name"`
-		Depart string `json:"depart"`
-	}
-	var responseData []taskInfo
-	for _, task := range tasks {
-		responseData = append(responseData, taskInfo{
-			ID:     task.ID,
-			Name:   task.Name,
-			Depart: model.DepartToStr(task.Depart),
-		})
-	}
 	if err != nil {
 		c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, ResponseNew(c, responseData))
+	c.JSON(http.StatusOK, ResponseNew(c, tasks))
 }

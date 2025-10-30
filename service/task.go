@@ -156,7 +156,8 @@ func (t Task) PostComment(taskID int, posterID int64, content string) (model.Com
 	if err := model.DB.Model(&model.Comment{}).Create(&comment).Error; err != nil {
 		return model.Comment{}, common.ErrNew(fmt.Errorf("发布评论失败：%v", err), common.SysErr)
 	}
-	if err := model.DB.Model(&model.User{}).Where("id = ?", posterID).First(&comment.Poster).Error; err != nil {
+	comment.Poster = &model.User{}
+	if err := model.DB.Model(&model.User{}).Where("id = ?", posterID).First(comment.Poster).Error; err != nil {
 		return model.Comment{}, common.ErrNew(fmt.Errorf("发布评论成功，查询评论者信息失败：%v", err), common.SysErr)
 	}
 	return comment, nil

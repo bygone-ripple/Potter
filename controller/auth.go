@@ -29,13 +29,7 @@ func (a Auth) Login(c *gin.Context) {
 		UserName: userInfo.Name,
 		Level:    1,
 	})
-	c.JSON(http.StatusOK, ResponseNew(c, struct {
-		ID   int64  `json:"id"`
-		Name string `json:"name"`
-	}{
-		ID:   userInfo.ID,
-		Name: userInfo.Name,
-	}))
+	c.JSON(http.StatusOK, ResponseNew(c, userInfo))
 }
 
 func (a Auth) Logout(c *gin.Context) {
