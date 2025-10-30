@@ -145,7 +145,54 @@ func (t Task) Delete(c *gin.Context) {
 }
 
 func (t Task) UpdateInfo(c *gin.Context) {
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	var json struct {
+		Name           string            `json:"name" binding:"required"`
+		Depart         string            `json:"depart" binding:"required,oneof=tech video art"`
+		Description    string            `json:"description" binding:"required"`
+		Deadline       time.Time         `json:"ddl" binding:"required"`
+		Status         int               `json:"status" binding:"required,oneof=1 2 3 4"`
+		Level          int               `json:"level" binding:"required,min=1,max=5"`
+		CriticalPoints []model.TimePoint `json:"criticalPoints" binding:"required"`
+		Uris           []string          `json:"uris" binding:"required"`
+		PosterID       int               `json:"posterID" binding:"required,min=1"`
+		AssigneeID     int               `json:"assigneeID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	session := SessionGet(c, "user-session").(UserSession)
+	var task model.Task
+	if err := copier.Copy(&task, &json); err != nil {
+		c.Error(common.ErrNew(err, common.SysErr))
+		return
+	}
+	// 由于 model.Task 中 PosterID 和 AssigneeID 是指针类型
+	// copier.Copy 会将 int 零值也赋值给指针，故单独判断为 0 时置为 nil
+	if *task.PosterID == 0 {
+		task.PosterID = nil
+	}
+	if *task.AssigneeID == 0 {
+		task.AssigneeID = nil
+	}
+	task.ID = int64(uri.TaskID)
+	if json.Depart != "" {
+		task.Depart = model.DepartToInt(json.Depart)
+	}
 
+	taskInfo, err := srv.Task.UpdateInfo(task, session.ID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, ResponseNew(c, taskInfo))
 }
 
 // AddAssignee 将自己添加为锅单的接锅人，并将状态设置成已接取，自由修改不应调用此接口

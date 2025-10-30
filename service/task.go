@@ -70,6 +70,21 @@ func (t Task) Delete(taskID int, userID int64) error {
 	return nil
 }
 
+func (t Task) UpdateInfo(taskInfo model.Task, userID int64) (model.Task, error) {
+	res := model.DB.Model(&model.Task{}).Where("id = ? AND poster_id = ?", taskInfo.ID, userID).Updates(&taskInfo)
+	if res.Error != nil {
+		return model.Task{}, common.ErrNew(fmt.Errorf("更新锅单失败：%v", res.Error), common.SysErr)
+	}
+	if res.RowsAffected == 0 {
+		return model.Task{}, common.ErrNew(fmt.Errorf("该锅单不存在或无权限更新"), common.OpErr)
+	}
+	task, err := t.GetInfo(int(taskInfo.ID))
+	if err != nil {
+		return model.Task{}, common.ErrNew(fmt.Errorf("更新锅单成功，查询锅单信息失败：%v", err), common.SysErr)
+	}
+	return task, nil
+}
+
 func (t Task) AddAssignee(taskID int, userID int64) (model.Task, error) {
 	res := model.DB.Model(&model.Task{}).
 		Where("id = ? AND assignee_id IS NULL", taskID).
