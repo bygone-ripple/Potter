@@ -143,5 +143,26 @@ func (t Task) DeleteAssignee(c *gin.Context) {
 }
 
 func (t Task) PostComment(c *gin.Context) {
-
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	var json struct {
+		Content string `json:"content" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	
+	session := SessionGet(c, "user-session").(UserSession)
+	commentInfo, err := srv.Task.PostComment(uri.TaskID, session.ID, json.Content)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusCreated, ResponseNew(c, commentInfo))
 }

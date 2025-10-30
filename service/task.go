@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"template/common"
 	"template/model"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -81,4 +82,20 @@ func (t Task) DeleteAssignee(taskID int, userID int64) error {
 		return common.ErrNew(fmt.Errorf("该锅单不存在或接锅人不是您"), common.OpErr)
 	}
 	return nil
+}
+
+func (t Task) PostComment(taskID int, posterID int64, content string) (model.Comment, error) {
+	comment := model.Comment{
+		Content:  content,
+		Time:     time.Now(),
+		TaskID:   int64(taskID),
+		PosterID: posterID,
+	}
+	if err := model.DB.Model(&model.Comment{}).Create(&comment).Error; err != nil {
+		return model.Comment{}, common.ErrNew(fmt.Errorf("发布评论失败：%v", err), common.SysErr)
+	}
+	if err := model.DB.Model(&model.User{}).Where("id = ?", posterID).First(&comment.Poster).Error; err != nil {
+		return model.Comment{}, common.ErrNew(fmt.Errorf("发布评论成功，查询评论者信息失败：%v", err), common.SysErr)
+	}
+	return comment, nil
 }
