@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"template/common"
 	"template/model"
@@ -39,8 +40,9 @@ func (*Task) Add(c *gin.Context) {
 	task.Status = int(model.NotTaken)
 
 	taskInfo, err := srv.Task.Add(task)
+	// 这里返回的 err 没有被包装过
 	if err != nil {
-		c.Error(err)
+		c.Error(common.ErrNew(fmt.Errorf("添加锅单错误：%v", err), common.SysErr))
 		return
 	}
 	c.JSON(http.StatusCreated, ResponseNew(c, struct {
@@ -120,8 +122,9 @@ func (t Task) GetInfo(c *gin.Context) {
 		return
 	}
 	taskInfo, err := srv.Task.GetInfo(uri.TaskID)
+	// 这里返回的 err 没有被包装过
 	if err != nil {
-		c.Error(err)
+		c.Error(common.ErrNew(fmt.Errorf("获取锅单信息错误：%v", err), common.SysErr))
 		return
 	}
 	c.JSON(http.StatusOK, ResponseNew(c, taskInfo))
