@@ -149,6 +149,7 @@ func (t Task) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, ResponseNew(c, nil))
 }
 
+// UpdateInfo 修改锅单信息，仅发布者或接锅人可修改，若要修改发布者和接锅人不应调用此接口
 func (t Task) UpdateInfo(c *gin.Context) {
 	var uri struct {
 		TaskID int `uri:"taskID" binding:"required,min=1"`
@@ -166,8 +167,6 @@ func (t Task) UpdateInfo(c *gin.Context) {
 		Level          int               `json:"level" binding:"required,min=1,max=5"`
 		CriticalPoints []model.TimePoint `json:"criticalPoints" binding:"required"`
 		Uris           []string          `json:"uris" binding:"required"`
-		PosterID       int               `json:"posterID" binding:"required,min=1"`
-		AssigneeID     int               `json:"assigneeID" binding:"required,min=1"`
 	}
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.Error(common.ErrNew(err, common.ParamErr))
@@ -179,20 +178,37 @@ func (t Task) UpdateInfo(c *gin.Context) {
 		c.Error(common.ErrNew(err, common.SysErr))
 		return
 	}
-	// 由于 model.Task 中 PosterID 和 AssigneeID 是指针类型
-	// copier.Copy 会将 int 零值也赋值给指针，故单独判断为 0 时置为 nil
-	if *task.PosterID == 0 {
-		task.PosterID = nil
-	}
-	if *task.AssigneeID == 0 {
-		task.AssigneeID = nil
-	}
 	task.ID = int64(uri.TaskID)
 	if json.Depart != "" {
 		task.Depart = model.DepartToInt(json.Depart)
 	}
 
 	taskInfo, err := srv.Task.UpdateInfo(task, session.ID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, ResponseNew(c, taskInfo))
+}
+
+// UpdateAssignee 修改锅单的接锅人，仅发布者可调用
+func (t Task) UpdateAssignee(c *gin.Context) {
+	var uri struct {
+		TaskID int `uri:"taskID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	var json struct {
+		AssigneeID int64 `json:"assigneeID" binding:"required,min=1"`
+	}
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
+	session := SessionGet(c, "user-session").(UserSession)
+	taskInfo, err := srv.Task.UpdateAssignee(uri.TaskID, json.AssigneeID, session.ID)
 	if err != nil {
 		c.Error(err)
 		return

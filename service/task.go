@@ -71,7 +71,7 @@ func (t Task) Delete(taskID int, userID int64) error {
 }
 
 func (t Task) UpdateInfo(taskInfo model.Task, userID int64) (model.Task, error) {
-	res := model.DB.Model(&model.Task{}).Where("id = ? AND poster_id = ?", taskInfo.ID, userID).Updates(&taskInfo)
+	res := model.DB.Model(&model.Task{}).Omit("poster_id", "assignee_id").Where("id = ? AND (poster_id = ? OR assignee_id = ?)", taskInfo.ID, userID, userID).Updates(&taskInfo)
 	if res.Error != nil {
 		return model.Task{}, common.ErrNew(fmt.Errorf("更新锅单失败：%v", res.Error), common.SysErr)
 	}
@@ -81,6 +81,23 @@ func (t Task) UpdateInfo(taskInfo model.Task, userID int64) (model.Task, error) 
 	task, err := t.GetInfo(int(taskInfo.ID))
 	if err != nil {
 		return model.Task{}, common.ErrNew(fmt.Errorf("更新锅单成功，查询锅单信息失败：%v", err), common.SysErr)
+	}
+	return task, nil
+}
+
+func (t Task) UpdateAssignee(taskID int, assigneeID int64, userID int64) (model.Task, error) {
+	res := model.DB.Model(&model.Task{}).Where("id = ? AND poster_id = ?", taskID, userID).Updates(map[string]any{
+		"assignee_id": assigneeID,
+	})
+	if res.Error != nil {
+		return model.Task{}, common.ErrNew(fmt.Errorf("更新接锅人失败：%v", res.Error), common.SysErr)
+	}
+	if res.RowsAffected == 0 {
+		return model.Task{}, common.ErrNew(fmt.Errorf("该锅单不存在或发布者不是您"), common.OpErr)
+	}
+	task, err := t.GetInfo(taskID)
+	if err != nil {
+		return model.Task{}, common.ErrNew(fmt.Errorf("更新接锅人成功，查询锅单信息失败：%v", err), common.SysErr)
 	}
 	return task, nil
 }

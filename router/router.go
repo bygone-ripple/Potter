@@ -37,6 +37,7 @@ func InitRouter(r *gin.Engine) {
 			taskRouter.GET("/:taskID", ctr.Task.GetInfo)
 			taskRouter.DELETE("/:taskID", ctr.Task.Delete)
 			taskRouter.PUT("/:taskID", ctr.Task.UpdateInfo)
+			taskRouter.PUT("/:taskID/assignees", ctr.Task.UpdateAssignee)
 			taskRouter.POST("/:taskID/assignees/me", ctr.Task.AddAssignee)
 			taskRouter.DELETE("/:taskID/assignees/me", ctr.Task.DeleteAssignee)
 			taskRouter.POST("/:taskID/comments", ctr.Task.PostComment)
