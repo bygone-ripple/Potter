@@ -33,6 +33,15 @@ type TimePoint struct {
 	Time  time.Time `json:"time"`
 }
 
+type Status int
+
+const (
+	NotTaken   Status = 1 // 未接取
+	InProgress Status = 2 // 进行中
+	Completed  Status = 3 // 已完成
+	Abandoned  Status = 4 // 已废止
+)
+
 // Depart 数据库值int -> 各部门是否参与的map
 func (t *Task) DepartToMap() map[string]bool {
 	result := make(map[string]bool)
