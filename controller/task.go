@@ -91,6 +91,7 @@ func (t Task) Get(c *gin.Context) {
 		Description string    `json:"description"`
 		Deadline    time.Time `json:"ddl"`
 		Level       int       `json:"level"`
+		Status      int       `json:"status"`
 	}
 	var responseData []taskInfo
 	for _, task := range tasks {
@@ -101,6 +102,7 @@ func (t Task) Get(c *gin.Context) {
 			Description: task.Description,
 			Deadline:    task.Deadline,
 			Level:       task.Level,
+			Status:      task.Status,
 		})
 	}
 	c.JSON(http.StatusOK, ResponseNew(c, struct {
