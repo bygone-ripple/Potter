@@ -44,7 +44,7 @@ func InitRouter(r *gin.Engine) {
 		commentRouter := apiRouter.Group("/comments")
 		{
 			commentRouter.Use(middleware.CheckRole(1))
-			commentRouter.DELETE("/:commentID", ctr.Comment.DeleteComment)
+			commentRouter.DELETE("/:commentID", ctr.Comment.Delete)
 		}
 	}
 }
