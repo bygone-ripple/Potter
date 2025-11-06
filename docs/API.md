@@ -157,16 +157,6 @@ API 文档
           "ddl": "2025-12-15T18:30:00+08:00",
           "level": 3,
           "status": 1,
-          "criticalPoints": [
-              {
-                  "event": "阶段一：集齐三支旋律",
-                  "time": "2025-12-01T09:00:00+08:00"
-              },
-              {
-                  "event": "阶段二：击败苍白之母",
-                  "time": "2025-12-10T14:00:00+08:00"
-              }
-          ],
           "uris": [
               "https://localhost:8080/uploads/task_1145141919.png"
           ],
@@ -232,16 +222,6 @@ API 文档
   "description": "这是一个测试锅单，用于演示请求格式",
   "ddl": "2025-12-15T18:30:00+08:00",
   "level": 3,
-  "criticalPoints": [
-    {
-      "time": "2025-12-01T09:00:00+08:00",
-      "event": "阶段一：需求确认"
-    },
-    {
-      "time": "2025-12-10T14:00:00+08:00",
-      "event": "阶段二：实现并联调"
-    }
-  ],
   "uris": [
     "https://localhost:8080/static/spec_1730246400.pdf",
     "https://localhost:8080/static/design_1730246401.png"
@@ -257,7 +237,6 @@ API 文档
 | description | string | 是 | 锅单描述 |
 | ddl | string | 是 | 截止时间，RFC3339 格式 |
 | level | integer | 是 | 难度等级，1-5 |
-| criticalPoints | array | 是 | 关键时间点数组 |
 | uris | array | 否 | 附件 URI 数组 |
 
 **响应示例** (201 Created):
@@ -272,16 +251,6 @@ API 文档
     "ddl": "2025-12-15T18:30:00+08:00",
     "level": 3,
     "status": 1,
-    "criticalPoints": [
-      {
-        "time": "2025-12-01T09:00:00+08:00",
-        "event": "阶段一：需求确认"
-      },
-      {
-        "time": "2025-12-10T14:00:00+08:00",
-        "event": "阶段二：实现并联调"
-      }
-    ],
     "uris": [
       "https://localhost:8080/static/spec_1730246400.pdf",
       "https://localhost:8080/static/design_1730246401.png"
@@ -383,16 +352,6 @@ GET /tasks/1
     "ddl": "2025-11-15T18:00:00+08:00",
     "level": 4,
     "status": 2,
-    "criticalPoints": [
-      {
-        "time": "2025-11-05T12:00:00+08:00",
-        "event": "完成数据库查询优化"
-      },
-      {
-        "time": "2025-11-10T12:00:00+08:00",
-        "event": "完成前端资源压缩"
-      }
-    ],
     "uris": [
       "https://localhost:8080/static/screenshot_1730246400.png",
       "https://localhost:8080/static/performance_report_1730246401.pdf"
@@ -448,16 +407,6 @@ GET /tasks/1
   "ddl": "2025-11-15T18:00:00+08:00",
   "level": 5,
   "status": 2,
-  "criticalPoints": [
-    {
-      "time": "2025-11-05T12:00:00+08:00",
-      "event": "完成数据库查询优化"
-    },
-    {
-      "time": "2025-11-10T12:00:00+08:00",
-      "event": "完成前端资源压缩"
-    }
-  ],
   "uris": [
     "https://localhost:8080/static/screenshot_1730246400.png",
     "https://localhost:8080/static/performance_report_1730246401.pdf"
@@ -474,7 +423,6 @@ GET /tasks/1
 | ddl | string | 是 | 截止时间，RFC3339 格式 |
 | level | integer | 是 | 难度等级，1-5 |
 | status | integer | 是 | 状态：1-未接取, 2-进行中, 3-已完成, 4-已弃置 |
-| criticalPoints | array | 是 | 关键时间点数组 |
 | uris | array | 是 | 附件 URI 数组，可传空数组 |
 
 **重要说明**:
@@ -495,16 +443,6 @@ GET /tasks/1
     "ddl": "2025-11-15T18:00:00+08:00",
     "level": 5,
     "status": 2,
-    "criticalPoints": [
-      {
-        "time": "2025-11-05T12:00:00+08:00",
-        "event": "完成数据库查询优化"
-      },
-      {
-        "time": "2025-11-10T12:00:00+08:00",
-        "event": "完成前端资源压缩"
-      }
-    ],
     "uris": [
       "https://localhost:8080/static/screenshot_1730246400.png",
       "https://localhost:8080/static/performance_report_1730246401.pdf"
@@ -583,16 +521,6 @@ DELETE /tasks/1
         "ddl": "2025-12-15T18:30:00+08:00",
         "level": 3,
         "status": 2,
-        "criticalPoints": [
-            {
-                "event": "阶段一：集齐三支旋律",
-                "time": "2025-12-01T09:00:00+08:00"
-            },
-            {
-                "event": "阶段二：击败苍白之母",
-                "time": "2025-12-10T14:00:00+08:00"
-            }
-        ],
         "uris": [
             "https://localhost:8080/uploads/task_1145141919.png"
         ],
@@ -654,16 +582,6 @@ POST /tasks/1/assignees/me
         "ddl": "2025-12-15T18:30:00+08:00",
         "level": 3,
         "status": 2,
-        "criticalPoints": [
-            {
-                "event": "阶段一：集齐三支旋律",
-                "time": "2025-12-01T09:00:00+08:00"
-            },
-            {
-                "event": "阶段二：击败苍白之母",
-                "time": "2025-12-10T14:00:00+08:00"
-            }
-        ],
         "uris": [
             "https://localhost:8080/uploads/task_1145141919.png"
         ],

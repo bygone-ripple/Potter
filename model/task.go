@@ -16,7 +16,7 @@ type Task struct {
 	Deadline       time.Time   `gorm:"column:ddl;comment:'截止时间'" json:"ddl"`
 	Level          int         `gorm:"column:level;default:0;comment:'难度评级'" json:"level"`
 	Status         int         `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
-	CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
+	// CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
 	Uris           []string    `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
 
 	Comments   []Comment `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"comments,omitempty"`
@@ -31,10 +31,10 @@ type Task struct {
 // Task 与 Comment 为 has many
 // Task 与 Poster, Assignee 均为 belong to
 
-type TimePoint struct {
-	Event string    `json:"event"`
-	Time  time.Time `json:"time"`
-}
+// type TimePoint struct {
+// 	Event string    `json:"event"`
+// 	Time  time.Time `json:"time"`
+// }
 
 type Status int
 
@@ -90,7 +90,7 @@ func (t Task) MarshalJSON() ([]byte, error) {
 		Deadline       time.Time   `json:"ddl"`
 		Level          int         `json:"level"`
 		Status         int         `json:"status"`
-		CriticalPoints []TimePoint `json:"criticalPoints"`
+		// CriticalPoints []TimePoint `json:"criticalPoints"`
 		Uris           []string    `json:"uris"`
 		Comments       []Comment   `json:"comments,omitempty"`
 		PosterID       *int64      `json:"posterID,omitempty"`
@@ -105,7 +105,7 @@ func (t Task) MarshalJSON() ([]byte, error) {
 		Deadline:       t.Deadline,
 		Level:          t.Level,
 		Status:         t.Status,
-		CriticalPoints: t.CriticalPoints,
+		// CriticalPoints: t.CriticalPoints,
 		Uris:           t.Uris,
 		Comments:       t.Comments,
 		PosterID:       t.PosterID,

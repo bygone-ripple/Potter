@@ -21,7 +21,7 @@ func (*Task) Add(c *gin.Context) {
 		Description    string            `json:"description" binding:"required"`
 		Deadline       time.Time         `json:"ddl" binding:"required"`
 		Level          int               `json:"level" binding:"required,min=1,max=5"`
-		CriticalPoints []model.TimePoint `json:"criticalPoints" binding:"required"`
+		// CriticalPoints []model.TimePoint `json:"criticalPoints" binding:"required"`
 		Uris           []string          `json:"uris" binding:"omitempty"`
 	}
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -126,7 +126,7 @@ func (t Task) UpdateInfo(c *gin.Context) {
 		Deadline       time.Time         `json:"ddl" binding:"required"`
 		Status         int               `json:"status" binding:"required,oneof=1 2 3 4"`
 		Level          int               `json:"level" binding:"required,min=1,max=5"`
-		CriticalPoints []model.TimePoint `json:"criticalPoints" binding:"required"`
+		// CriticalPoints []model.TimePoint `json:"criticalPoints" binding:"required"`
 		Uris           []string          `json:"uris" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&json); err != nil {
