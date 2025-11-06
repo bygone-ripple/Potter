@@ -147,32 +147,32 @@ API 文档
 **响应示例** (200 OK):
 ```json
 {
-    "success": true,
-    "data": [
-        {
-            "id": 13,
-            "name": "拯救世界",
-            "depart": "tech",
-            "description": "技术宅拯救世界",
-            "ddl": "2025-12-15T18:30:00+08:00",
-            "level": 3,
-            "status": 1,
-            "criticalPoints": [
-                {
-                    "event": "阶段一：集齐三支旋律",
-                    "time": "2025-12-01T09:00:00+08:00"
-                },
-                {
-                    "event": "阶段二：击败苍白之母",
-                    "time": "2025-12-10T14:00:00+08:00"
-                }
-            ],
-            "uris": [
-                "https://localhost:8080/uploads/task_1145141919.png"
-            ],
-            "posterID": 5
-        }
-    ]
+  "success": true,
+  "data": [
+      {
+          "id": 13,
+          "name": "拯救世界",
+          "depart": "tech",
+          "description": "技术宅拯救世界",
+          "ddl": "2025-12-15T18:30:00+08:00",
+          "level": 3,
+          "status": 1,
+          "criticalPoints": [
+              {
+                  "event": "阶段一：集齐三支旋律",
+                  "time": "2025-12-01T09:00:00+08:00"
+              },
+              {
+                  "event": "阶段二：击败苍白之母",
+                  "time": "2025-12-10T14:00:00+08:00"
+              }
+          ],
+          "uris": [
+              "https://localhost:8080/uploads/task_1145141919.png"
+          ],
+          "posterID": 5
+      }
+  ]
 }
 ```
 
@@ -194,9 +194,19 @@ API 文档
   "success": true,
   "data": [
     {
-      "id": 3,
-      "name": "录制宣传视频",
-      "depart": "video"
+      "id": 5,
+      "name": "修复首页加载缓慢问题",
+      "depart": "tech",
+      "description": "首页加载时间超过3秒，需要优化数据库查询和前端资源加载",
+      "ddl": "2025-11-16T02:00:00+08:00",
+      "level": 4,
+      "status": 2,
+      "uris": [
+          "/static/screenshot_1730246400.png",
+          "/static/performance_report_1730246401.pdf"
+      ],
+      "posterID": 1,
+      "assigneeID": 1
     }
   ]
 }
@@ -235,7 +245,7 @@ API 文档
   "uris": [
     "https://localhost:8080/static/spec_1730246400.pdf",
     "https://localhost:8080/static/design_1730246401.png"
-  ]
+  ],
 }
 ```
 
@@ -320,7 +330,12 @@ GET /tasks/?page=1&limit=2&depart=tech&status=1
         "description": "首页加载时间超过3秒，需要优化",
         "ddl": "2025-11-15T18:00:00+08:00",
         "level": 4,
-        "status": 1
+        "status": 1,
+        "uris": [
+          "https://localhost:8080/static/spec_1730246400.pdf",
+          "https://localhost:8080/static/design_1730246401.png"
+        ],
+        "posterID": 1
       },
       {
         "id": 2,
@@ -329,7 +344,9 @@ GET /tasks/?page=1&limit=2&depart=tech&status=1
         "description": "添加角色和权限管理功能",
         "ddl": "2025-12-01T12:00:00+08:00",
         "level": 5,
-        "status": 2
+        "status": 1,
+        "posterID": 2,
+        "assigneeID": 1
       }
     ]
   }
@@ -388,7 +405,8 @@ GET /tasks/1
         "posterID": 2,
         "poster": {
           "id": 2,
-          "name": "bocchibocchi"
+          "name": "bocchibocchi",
+          "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
         }
       }
     ],
