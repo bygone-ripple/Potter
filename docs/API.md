@@ -30,7 +30,8 @@ API 文档
   "success": true,
   "data": {
     "id": 1,
-    "name": "girlsbandcry"
+    "name": "girlsbandcry",
+    "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
   }
 }
 ```
@@ -66,9 +67,18 @@ API 文档
 ```json
 {
   "name": "bocchibocchi",
+  "avatar": "https://localhost:8080/uploads/avatar_1145141919.png",
   "password": "kitakita"
 }
 ```
+
+**字段说明**:
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| id | integer | 是 | 用户 ID |
+| name | string | 是 | 用户昵称 |
+| password | string | 是 | 用户密码 |
+| avatar | string | 否 | 用户头像url |
 
 **响应示例** (200 OK):
 ```json
@@ -76,7 +86,8 @@ API 文档
   "success": true,
   "data": {
     "id": 2,
-    "name": "bocchibocchi"
+    "name": "bocchibocchi",
+    "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
   }
 }
 ```
@@ -96,6 +107,7 @@ API 文档
 {
   "id": 1,
   "name": "gbc",
+  "avatar": "https://localhost:8080/uploads/avatar_1145141919.png",
   "password": "buchikome"
 }
 ```
@@ -105,6 +117,7 @@ API 文档
 |------|------|------|------|
 | id | integer | 是 | 用户 ID |
 | name | string | 否 | 用户昵称，不填则不更新 |
+| avatar | string | 否 | 用户头像url，不填则不更新 |
 | password | string | 否 | 用户密码，不填则不更新 |
 
 **响应示例** (200 OK):
@@ -113,7 +126,8 @@ API 文档
   "success": true,
   "data": {
     "id": 1,
-    "name": "gbc"
+    "name": "gbc",
+    "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
   }
 }
 ```
@@ -381,12 +395,14 @@ GET /tasks/1
     "posterID": 1,
     "poster": {
       "id": 1,
-      "name": "girlsbandcry"
+      "name": "girlsbandcry",
+      "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
     },
     "assigneeID": 2,
     "assignee": {
       "id": 2,
-      "name": "bocchibocchi"
+      "name": "bocchibocchi",
+      "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
     }
   }
 }
@@ -478,12 +494,14 @@ GET /tasks/1
     "posterID": 1,
     "poster": {
       "id": 1,
-      "name": "girlsbandcry"
+      "name": "girlsbandcry",
+      "avatar":"https://localhost:8080/uploads/avatar_1145141919.png"
     },
     "assigneeID": 2,
     "assignee": {
       "id": 2,
-      "name": "bocchibocchi"
+      "name": "bocchibocchi",
+      "avatar": "https://localhost:8080/uploads/avatar_1145141919.png"
     }
   }
 }
@@ -563,12 +581,14 @@ DELETE /tasks/1
         "posterID": 5,
         "poster": {
             "id": 5,
-            "name": "cyrene"
+            "name": "cyrene",
+            "avatar":"https://localhost:8080/uploads/avatar_1145141919.png"
         },
         "assigneeID": 1,
         "assignee": {
             "id": 1,
-            "name": "girlsbandcry"
+            "name": "girlsbandcry",
+            "avatar":"https://localhost:8080/uploads/avatar_1145141919.png"
         }
     }
 }
@@ -632,12 +652,14 @@ POST /tasks/1/assignees/me
         "posterID": 5,
         "poster": {
             "id": 5,
-            "name": "cyrene"
+            "name": "cyrene",
+            "avatar":"https://localhost:8080/uploads/avatar_1145141919.png"
         },
         "assigneeID": 5,
         "assignee": {
             "id": 5,
-            "name": "cyrene"
+            "name": "cyrene",
+            "avatar":"https://localhost:8080/uploads/avatar_1145141919.png"
         }
     }
 }
@@ -721,7 +743,8 @@ DELETE /tasks/1/assignees/me
     "posterID": 2,
     "poster": {
       "id": 2,
-      "name": "bocchibocchi"
+      "name": "bocchibocchi",
+      "avatar":"https://localhost:8080/uploads/avatar_1145141919.png"
     }
   }
 }

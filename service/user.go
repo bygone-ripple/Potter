@@ -9,13 +9,14 @@ import (
 
 type User struct{}
 
-func (u User) Register(name string, password string) (model.User, error) {
+func (u User) Register(name string, avatar string, password string) (model.User, error) {
 	hash, hashErr := utils.HashPassword(password)
 	if hashErr != nil {
 		return model.User{}, common.ErrNew(fmt.Errorf("哈希密码时出错：%v", hashErr), common.SysErr)
 	}
 	user := model.User{
 		Name:     name,
+		Avatar:   avatar,
 		Password: hash,
 	}
 
@@ -34,7 +35,7 @@ func (u User) Register(name string, password string) (model.User, error) {
 	return user, nil
 }
 
-func (u User) UpdateInfo(id int64, name string, password string) (model.User, error) {
+func (u User) UpdateInfo(id int64, name string, avatar string, password string) (model.User, error) {
 	var user model.User
 	if err := model.DB.Model(&model.User{}).Where("id = ?", id).First(&user).Error; err != nil {
 		return model.User{}, common.ErrNew(fmt.Errorf("获取用户信息失败：%v", err), common.SysErr)
@@ -42,6 +43,9 @@ func (u User) UpdateInfo(id int64, name string, password string) (model.User, er
 
 	if name != "" {
 		user.Name = name
+	}
+	if avatar != "" {
+		user.Avatar = avatar
 	}
 	if password != "" {
 		hash, hashErr := utils.HashPassword(password)

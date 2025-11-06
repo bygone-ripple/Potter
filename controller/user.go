@@ -13,13 +13,14 @@ type User struct{}
 func (u User) Register(c *gin.Context) {
 	var json struct {
 		Name     string `json:"name" binding:"required"`
+		Avatar   string `json:"avatar" binding:"omitempty"`
 		Password string `json:"password" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.Error(common.ErrNew(err, common.ParamErr))
 		return
 	}
-	userInfo, err := srv.User.Register(json.Name, json.Password)
+	userInfo, err := srv.User.Register(json.Name, json.Avatar, json.Password)
 	if err != nil {
 		c.Error(err)
 		return
@@ -42,6 +43,7 @@ func (u User) UpdateInfo(c *gin.Context) {
 	var json struct {
 		ID       int64  `json:"id" binding:"required"`
 		Name     string `json:"name" binding:"omitempty"`
+		Avatar   string `json:"avatar" binding:"omitempty"`
 		Password string `json:"password" binding:"omitempty"`
 	}
 	if err := c.ShouldBindJSON(&json); err != nil {
@@ -52,7 +54,7 @@ func (u User) UpdateInfo(c *gin.Context) {
 		c.Error(common.ErrNew(fmt.Errorf("无权限修改该用户信息"), common.AuthErr))
 		return
 	}
-	userInfo, err := srv.User.UpdateInfo(json.ID, json.Name, json.Password)
+	userInfo, err := srv.User.UpdateInfo(json.ID, json.Name, json.Avatar, json.Password)
 	if err != nil {
 		c.Error(err)
 		return
