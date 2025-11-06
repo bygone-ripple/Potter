@@ -45,6 +45,9 @@ func (t Task) Get(pager common.PagerForm, name string, depart string, status int
 func (t Task) GetInfo(taskID int) (model.Task, error) {
 	var task model.Task
 	if err := model.DB.Model(&model.Task{}).
+		Preload("Comments", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Poster").Order("time DESC")
+		}).
 		Preload("Poster", func(db *gorm.DB) *gorm.DB {
 			return db.Omit("password")
 		}).
