@@ -35,6 +35,14 @@ func (u User) Register(name string, avatar string, password string) (model.User,
 	return user, nil
 }
 
+func (u User) GetInfo(userID int64) (model.User, error) {
+	var user model.User
+	if err := model.DB.Model(&model.User{}).Where("id = ?", userID).First(&user).Error; err != nil {
+		return model.User{}, common.ErrNew(fmt.Errorf("获取用户信息失败：%v", err), common.SysErr)
+	}
+	return user, nil
+}
+
 func (u User) UpdateInfo(id int64, name string, avatar string, password string) (model.User, error) {
 	var user model.User
 	if err := model.DB.Model(&model.User{}).Where("id = ?", id).First(&user).Error; err != nil {

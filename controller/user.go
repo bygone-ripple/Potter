@@ -35,7 +35,19 @@ func (u User) Register(c *gin.Context) {
 }
 
 func (u User) GetInfo(c *gin.Context) {
+	session := SessionGet(c, "user-session")
+	if session == nil {
+		c.Error(common.ErrNew(fmt.Errorf("用户未登录"), common.AuthErr))
+		return
+	}
+	userID := session.(UserSession).ID
 
+	userInfo, err := srv.User.GetInfo(userID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, ResponseNew(c, userInfo))
 }
 
 // UpdateInfo 修改用户信息，需要验证用户身份，若传入参数为空则不修改该项

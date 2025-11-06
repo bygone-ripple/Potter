@@ -24,6 +24,7 @@ func InitRouter(r *gin.Engine) {
 			selfRouter := userRouter.Group("/me")
 			{
 				selfRouter.Use(middleware.CheckRole(1))
+				selfRouter.GET("/", ctr.User.GetInfo)
 				selfRouter.PUT("/", ctr.User.UpdateInfo)
 				selfRouter.GET("/posted-tasks", ctr.User.GetPostedTasks)
 				selfRouter.GET("/assigned-tasks", ctr.User.GetAssignedTasks)
