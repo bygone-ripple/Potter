@@ -79,13 +79,20 @@ func (u User) UpdateInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseNew(c, userInfo))
 }
 
-// GetPostedTasks 获取该用户发布的所有锅单
+// GetPostedTasks 获取该用户发布的锅单，支持分页
 func (u User) GetPostedTasks(c *gin.Context) {
+	var query struct {
+		common.PagerForm
+	}
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
 	session := SessionGet(c, "user-session")
 	// session 不为空，因接口中间件有验证登录
 	userID := session.(UserSession).ID
 
-	tasks, err := srv.User.GetPostedTasks(userID)
+	tasks, err := srv.User.GetPostedTasks(userID, query.PagerForm)
 	if err != nil {
 		c.Error(err)
 		return
@@ -93,13 +100,20 @@ func (u User) GetPostedTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseNew(c, tasks))
 }
 
-// GetAssignedTasks 获取该用户接取的所有锅单
+// GetAssignedTasks 获取该用户接取的锅单，支持分页
 func (u User) GetAssignedTasks(c *gin.Context) {
+	var query struct {
+		common.PagerForm
+	}
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.Error(common.ErrNew(err, common.ParamErr))
+		return
+	}
 	session := SessionGet(c, "user-session")
 	// session 不为空，因接口中间件有验证登录
 	userID := session.(UserSession).ID
 
-	tasks, err := srv.User.GetAssignedTasks(userID)
+	tasks, err := srv.User.GetAssignedTasks(userID, query.PagerForm)
 	if err != nil {
 		c.Error(err)
 		return
