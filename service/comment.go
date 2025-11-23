@@ -10,9 +10,10 @@ type Comment struct{}
 
 func (c Comment) Delete(commentID int, userID int64) error {
 	// 允许评论者本人或对应任务的发布者删除
-	res := model.DB.Model(&model.Comment{}).
-		Joins("LEFT JOIN tasks ON comments.task_id = tasks.id").
-		Where("comments.id = ? AND (comments.poster_id = ? OR tasks.poster_id = ?)", commentID, userID, userID).
+	tasksPosted := model.DB.Model(&model.Task{}).Select("id").Where("poster_id = ?", userID)
+
+	res := model.DB.Where("id = ?", commentID).
+		Where("poster_id = ? OR task_id IN (?)", userID, tasksPosted).
 		Delete(&model.Comment{})
 	if res.Error != nil {
 		return common.ErrNew(fmt.Errorf("删除评论失败：%v", res.Error), common.SysErr)
