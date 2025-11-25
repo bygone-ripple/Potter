@@ -62,12 +62,15 @@ func (t Task) GetInfo(taskID int) (model.Task, error) {
 }
 
 func (t Task) Delete(taskID int, userID int64) error {
-	res := model.DB.Model(&model.Task{}).Where("id = ? AND poster_id = ?", taskID, userID).Delete(&model.Task{})
-	if res.Error != nil {
-		return common.ErrNew(fmt.Errorf("删除锅单失败：%v", res.Error), common.SysErr)
+	var task model.Task
+	if err := model.DB.Model(&model.Task{}).Where("id = ?", taskID).First(&task).Error; err != nil {
+		return common.ErrNew(fmt.Errorf("查询锅单失败：%v", err), common.SysErr)
 	}
-	if res.RowsAffected == 0 {
-		return common.ErrNew(fmt.Errorf("该锅单不存在或负责人不是您"), common.OpErr)
+	if task.PosterID != nil && *task.PosterID != userID {
+		return common.ErrNew(fmt.Errorf("您不是该锅单的负责人，无法删除"), common.OpErr)
+	}
+	if err := model.DB.Model(&model.Task{}).Delete(&task).Error; err != nil {
+		return common.ErrNew(fmt.Errorf("删除锅单失败：%v", err), common.SysErr)
 	}
 
 	return nil

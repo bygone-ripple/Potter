@@ -2,7 +2,10 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // Depart 表示参与的部门，从高到低位分别为技术、视频、美工，如 0b101 表示技术与美工参与
@@ -78,6 +81,14 @@ func DepartToStr(depart int) string {
 		return "art"
 	}
 	return ""
+}
+
+func (t Task) BeforeDelete(tx *gorm.DB) (err error) {
+	if t.ID == 0 {
+		return nil
+	}
+	newName := fmt.Sprintf("%s__deleted_%d", t.Name, time.Now().Unix())
+	return tx.Model(&Task{}).Where("id = ?", t.ID).Update("name", newName).Error
 }
 
 // MarshalJSON 自定义 Task 结构体的 JSON 编码，以便将 Depart 字段转换为字符串
