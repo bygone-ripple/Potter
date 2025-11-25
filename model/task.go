@@ -13,14 +13,14 @@ import (
 // Status 表示锅单完成状态，1 表示未接取，2 表示进行中，3 表示已完成，4 表示已废止
 type Task struct {
 	BaseModel
-	Name           string      `gorm:"column:name;unique;not null;comment:'锅单名称'" json:"name"`
-	Depart         int         `gorm:"column:depart;comment:'参与部门'" json:"-"`
-	Description    string      `gorm:"column:description;comment:'锅单介绍'" json:"description"`
-	Deadline       time.Time   `gorm:"column:ddl;comment:'截止时间'" json:"ddl"`
-	Level          int         `gorm:"column:level;default:0;comment:'难度评级'" json:"level"`
-	Status         int         `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
+	Name        string    `gorm:"column:name;unique;not null;comment:'锅单名称'" json:"name"`
+	Depart      int       `gorm:"column:depart;comment:'参与部门'" json:"-"`
+	Description string    `gorm:"column:description;comment:'锅单介绍'" json:"description"`
+	Deadline    time.Time `gorm:"column:ddl;comment:'截止时间'" json:"ddl"`
+	Level       int       `gorm:"column:level;default:0;comment:'难度评级'" json:"level"`
+	Status      int       `gorm:"column:status;default:0;comment:'锅单状态'" json:"status"`
 	// CriticalPoints []TimePoint `gorm:"column:critical_points;serializer:json;comment:'关键时间节点'" json:"criticalPoints"`
-	Uris           []string    `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
+	Uris []string `gorm:"column:uris;serializer:json;comment:'附件资源路径'" json:"uris"`
 
 	Comments   []Comment `gorm:"foreignKey:TaskID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"comments,omitempty"`
 	PosterID   *int64    `gorm:"column:poster_id" json:"posterID,omitempty"`
@@ -94,35 +94,35 @@ func (t Task) BeforeDelete(tx *gorm.DB) (err error) {
 // MarshalJSON 自定义 Task 结构体的 JSON 编码，以便将 Depart 字段转换为字符串
 func (t Task) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		ID             int64       `json:"id,omitempty"`
-		Name           string      `json:"name"`
-		Depart         string      `json:"depart"`
-		Description    string      `json:"description"`
-		Deadline       time.Time   `json:"ddl"`
-		Level          int         `json:"level"`
-		Status         int         `json:"status"`
+		ID          int64     `json:"id,omitempty"`
+		Name        string    `json:"name"`
+		Depart      string    `json:"depart"`
+		Description string    `json:"description"`
+		Deadline    time.Time `json:"ddl"`
+		Level       int       `json:"level"`
+		Status      int       `json:"status"`
 		// CriticalPoints []TimePoint `json:"criticalPoints"`
-		Uris           []string    `json:"uris"`
-		Comments       []Comment   `json:"comments,omitempty"`
-		PosterID       *int64      `json:"posterID,omitempty"`
-		Poster         *User       `json:"poster,omitempty"`
-		AssigneeID     *int64      `json:"assigneeID,omitempty"`
-		Assignee       *User       `json:"assignee,omitempty"`
+		Uris       []string  `json:"uris"`
+		Comments   []Comment `json:"comments,omitempty"`
+		PosterID   *int64    `json:"posterID,omitempty"`
+		Poster     *User     `json:"poster,omitempty"`
+		AssigneeID *int64    `json:"assigneeID,omitempty"`
+		Assignee   *User     `json:"assignee,omitempty"`
 	}{
-		ID:             t.ID,
-		Name:           t.Name,
-		Depart:         DepartToStr(t.Depart),
-		Description:    t.Description,
-		Deadline:       t.Deadline,
-		Level:          t.Level,
-		Status:         t.Status,
+		ID:          t.ID,
+		Name:        t.Name,
+		Depart:      DepartToStr(t.Depart),
+		Description: t.Description,
+		Deadline:    t.Deadline,
+		Level:       t.Level,
+		Status:      t.Status,
 		// CriticalPoints: t.CriticalPoints,
-		Uris:           t.Uris,
-		Comments:       t.Comments,
-		PosterID:       t.PosterID,
-		Poster:         t.Poster,
-		AssigneeID:     t.AssigneeID,
-		Assignee:       t.Assignee,
+		Uris:       t.Uris,
+		Comments:   t.Comments,
+		PosterID:   t.PosterID,
+		Poster:     t.Poster,
+		AssigneeID: t.AssigneeID,
+		Assignee:   t.Assignee,
 	})
 }
 
