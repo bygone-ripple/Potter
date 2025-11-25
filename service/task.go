@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"template/common"
 	"template/model"
+	"template/utils"
 	"time"
 
 	"gorm.io/gorm"
@@ -79,6 +80,9 @@ func (t Task) Delete(taskID int, userID int64) error {
 func (t Task) UpdateInfo(taskInfo model.Task, userID int64) (model.Task, error) {
 	res := model.DB.Model(&model.Task{}).Omit("poster_id", "assignee_id").Where("id = ? AND (poster_id = ? OR assignee_id = ?)", taskInfo.ID, userID, userID).Updates(&taskInfo)
 	if res.Error != nil {
+		if utils.IsDuplicateKeyError(res.Error) {
+			return model.Task{}, common.ErrNew(fmt.Errorf("该锅单名称已被使用"), common.OpErr)
+		}
 		return model.Task{}, common.ErrNew(fmt.Errorf("更新锅单失败：%v", res.Error), common.SysErr)
 	}
 	if res.RowsAffected == 0 {

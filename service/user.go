@@ -64,6 +64,9 @@ func (u User) UpdateInfo(id int64, name string, avatar string, password string) 
 	}
 
 	if err := model.DB.Save(&user).Error; err != nil {
+		if utils.IsDuplicateKeyError(err) {
+			return model.User{}, common.ErrNew(fmt.Errorf("该昵称已被使用"), common.OpErr)
+		}
 		return model.User{}, common.ErrNew(fmt.Errorf("更新用户信息失败：%v", err), common.SysErr)
 	}
 

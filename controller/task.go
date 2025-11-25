@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"template/common"
 	"template/model"
+	"template/utils"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -42,6 +43,10 @@ func (*Task) Add(c *gin.Context) {
 	taskInfo, err := srv.Task.Add(task)
 	// 这里返回的 err 没有被包装过
 	if err != nil {
+		if utils.IsDuplicateKeyError(err) {
+			c.Error(common.ErrNew(fmt.Errorf("锅单名称已被使用"), common.OpErr))
+			return
+		}
 		c.Error(common.ErrNew(fmt.Errorf("添加锅单错误：%v", err), common.SysErr))
 		return
 	}
